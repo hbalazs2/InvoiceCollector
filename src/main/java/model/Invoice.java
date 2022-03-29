@@ -1,4 +1,4 @@
-package com.example.InvoiceCollector.model;
+package model;
 
 import java.util.Date;
 

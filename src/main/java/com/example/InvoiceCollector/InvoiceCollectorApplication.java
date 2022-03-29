@@ -1,6 +1,6 @@
 package com.example.InvoiceCollector;
 
-import com.example.InvoiceCollector.db.DBConnector;
+import db.DBConnector;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

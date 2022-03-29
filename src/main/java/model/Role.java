@@ -1,4 +1,4 @@
-package com.example.InvoiceCollector.model;
+package model;
 
 public class Role {
     private long id;
