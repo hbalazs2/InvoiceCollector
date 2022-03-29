@@ -19,9 +19,9 @@ public class DBConnector {
     private DBConnector() {
         try {
             this.connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/weather",
+                    "jdbc:mysql://localhost:3306/invoicecollector",
                     "admin",
-                    "Password"
+                    "password"
             );
         } catch (SQLException e) {
             e.printStackTrace();
