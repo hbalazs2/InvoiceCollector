@@ -36,28 +36,56 @@ public class Partner {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCountryCode() {
         return countryCode;
     }
 
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
     public String getPostalCode() {
         return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     public String getCity() {
         return city;
     }
 
+    public void setCity(String city) {
+        this.city = city;
+    }
+
     public String getAddress() {
         return address;
     }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public Date getConnectionDate() {
         return connectionDate;
+    }
+
+    public void setConnectionDate(Date connectionDate) {
+        this.connectionDate = connectionDate;
     }
 
     @Override

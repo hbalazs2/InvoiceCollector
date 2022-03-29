@@ -33,28 +33,44 @@ public class Invoice {
         this.partnersId = partnersId;
     }
 
-    public void setCompletionDate(Date completionDate) {
-        this.completionDate = completionDate;
-    }
-
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Date getCompletionDate() {
         return completionDate;
     }
 
+    public void setCompletionDate(Date completionDate) {
+        this.completionDate = completionDate;
+    }
+
     public Date getPaymentDeadline() {
         return paymentDeadline;
+    }
+
+    public void setPaymentDeadline(Date paymentDeadline) {
+        this.paymentDeadline = paymentDeadline;
     }
 
     public long getGrandTotal() {
         return grandTotal;
     }
 
+    public void setGrandTotal(long grandTotal) {
+        this.grandTotal = grandTotal;
+    }
+
     public long getPartnersId() {
         return partnersId;
+    }
+
+    public void setPartnersId(long partnersId) {
+        this.partnersId = partnersId;
     }
 
     @Override
