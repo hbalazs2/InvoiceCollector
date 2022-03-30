@@ -34,14 +34,14 @@ public class InvoiceDB {
         return invoices;
     }
 
-    public Invoice getInvoiceById(long id) {
+    public Invoice getInvoiceById(String id) {
 
         String sql = "SELECT * FROM invoices WHERE id = ?";
         Invoice invoice = null;
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setLong(1, id);
+            preparedStatement.setString(1, id);
             ResultSet result = preparedStatement.executeQuery();
             if (result.next()) {
                 invoice = new Invoice(
@@ -60,10 +60,9 @@ public class InvoiceDB {
 
     public Invoice insertInvoice(Invoice invoice) {
         String sql = "INSERT INTO invoices VALUES (?, ?, ?, ?, ?);";
-        long insertedId = -1;
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, invoice.getId());
             preparedStatement.setDate(2, (Date) invoice.getCompletionDate());
             preparedStatement.setDate(3, (Date) invoice.getPaymentDeadline());
@@ -71,37 +70,26 @@ public class InvoiceDB {
             preparedStatement.setLong(5, invoice.getPartnersId());
             preparedStatement.executeUpdate();
 
-            ResultSet result = preparedStatement.getGeneratedKeys();
-
-            if (result.next()) {
-                insertedId = result.getLong(1);
-            }
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-        return getInvoiceById(insertedId);
+        return getInvoiceById(invoice.getId());
     }
 
     public Invoice updateInvoice(Invoice invoice) {
         String sql = "UPDATE invoices SET (DEFAULT, ?, ?, ?, ?);";
-        long insertedId = -1;
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setDate(1, (Date) invoice.getCompletionDate());
             preparedStatement.setDate(2, (Date) invoice.getPaymentDeadline());
             preparedStatement.setLong(3, invoice.getGrandTotal());
             preparedStatement.setLong(4, invoice.getPartnersId());
             preparedStatement.executeUpdate();
 
-            ResultSet result = preparedStatement.getGeneratedKeys();
-
-            if (result.next()) {
-                insertedId = result.getLong(1);
-            }
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-        return getInvoiceById(insertedId);
+        return getInvoiceById(invoice.getId());
     }
 }

@@ -21,10 +21,10 @@ public class InvoiceCollectorApplication {
 	public static void testDB() {
 //		Connection connection = DBConnector.getInstance().getConnection();
 		InvoiceDB invoiceDB = new InvoiceDB();
-		Date complDate = Date.valueOf(LocalDate.parse("2022-03-31"));
-		Date deadline = Date.valueOf(LocalDate.parse("2022-04-01"));
-		Invoice invoice = invoiceDB.insertInvoice(new Invoice(complDate, deadline, 300000, 1));
-//		System.out.println(invoice);
+		Date complDate = Date.valueOf(LocalDate.parse("2022-02-25"));
+		Date deadline = Date.valueOf(LocalDate.parse("2022-03-15"));
+		Invoice invoice = invoiceDB.insertInvoice(new Invoice("ZS-2022/101" ,complDate, deadline, 55000, 2));
+		System.out.println(invoice);
 
 	}
 
