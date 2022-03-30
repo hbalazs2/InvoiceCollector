@@ -2,10 +2,7 @@ package db;
 
 import model.Invoice;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,5 +32,52 @@ public class InvoiceDB {
             e.printStackTrace();
         }
         return invoices;
+    }
+
+    public Invoice getInvoiceById(long id) {
+
+        String sql = "SELECT * FROM invoices WHERE id = ?";
+        Invoice invoice = null;
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
+            ResultSet result = preparedStatement.executeQuery();
+            if (result.next()) {
+                invoice = new Invoice(
+                        result.getLong("id"),
+                        result.getDate("completion_date"),
+                        result.getDate("payment_deadline"),
+                        result.getLong("grand_total"),
+                        result.getLong("partners_id")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return invoice;
+    }
+
+    public Invoice insertInvoice(Invoice invoice) {
+        String sql = "INSERT INTO invoices VALUES (DEFAULT, ?, ?, ?, ?);";
+        long insertedId = -1;
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setDate(1, (Date) invoice.getCompletionDate());
+            preparedStatement.setDate(2, (Date) invoice.getPaymentDeadline());
+            preparedStatement.setLong(3, invoice.getGrandTotal());
+            preparedStatement.setLong(4, invoice.getPartnersId());
+            preparedStatement.executeUpdate();
+
+            ResultSet result = preparedStatement.getGeneratedKeys();
+
+            if (result.next()) {
+                insertedId = result.getLong(1);
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return getInvoiceById(insertedId);
     }
 }
