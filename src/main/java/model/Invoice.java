@@ -3,7 +3,7 @@ package model;
 import java.util.Date;
 
 public class Invoice {
-    private long id;
+    private String id;
     private Date completionDate;
     private Date paymentDeadline;
     private long grandTotal;
@@ -25,7 +25,7 @@ public class Invoice {
     }
 
     // constructor with ID
-    public Invoice(long id, Date completionDate, Date paymentDeadline, long grandTotal, long partnersId) {
+    public Invoice(String id, Date completionDate, Date paymentDeadline, long grandTotal, long partnersId) {
         this.id = id;
         this.completionDate = completionDate;
         this.paymentDeadline = paymentDeadline;
@@ -33,11 +33,11 @@ public class Invoice {
         this.partnersId = partnersId;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

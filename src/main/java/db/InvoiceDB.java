@@ -20,7 +20,7 @@ public class InvoiceDB {
             ResultSet result = preparedStatement.executeQuery();
             while (result.next()) {
                 invoice = new Invoice(
-                        result.getLong("id"),
+                        result.getString("id"),
                         result.getDate("completion_date"),
                         result.getDate("payment_deadline"),
                         result.getLong("grand_total"),
@@ -45,7 +45,7 @@ public class InvoiceDB {
             ResultSet result = preparedStatement.executeQuery();
             if (result.next()) {
                 invoice = new Invoice(
-                        result.getLong("id"),
+                        result.getString("id"),
                         result.getDate("completion_date"),
                         result.getDate("payment_deadline"),
                         result.getLong("grand_total"),
@@ -59,7 +59,31 @@ public class InvoiceDB {
     }
 
     public Invoice insertInvoice(Invoice invoice) {
-        String sql = "INSERT INTO invoices VALUES (DEFAULT, ?, ?, ?, ?);";
+        String sql = "INSERT INTO invoices VALUES (?, ?, ?, ?, ?);";
+        long insertedId = -1;
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, invoice.getId());
+            preparedStatement.setDate(2, (Date) invoice.getCompletionDate());
+            preparedStatement.setDate(3, (Date) invoice.getPaymentDeadline());
+            preparedStatement.setLong(4, invoice.getGrandTotal());
+            preparedStatement.setLong(5, invoice.getPartnersId());
+            preparedStatement.executeUpdate();
+
+            ResultSet result = preparedStatement.getGeneratedKeys();
+
+            if (result.next()) {
+                insertedId = result.getLong(1);
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return getInvoiceById(insertedId);
+    }
+
+    public Invoice updateInvoice(Invoice invoice) {
+        String sql = "UPDATE invoices SET (DEFAULT, ?, ?, ?, ?);";
         long insertedId = -1;
 
         try {
