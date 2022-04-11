@@ -22,15 +22,16 @@ public class InvoiceCollectorApplication {
 	public static void testDB() {
 //		Connection connection = DBConnector.getInstance().getConnection();
 		InvoiceDB invoiceDB = new InvoiceDB();
-		Date complDate = Date.valueOf(LocalDate.parse("2022-02-25"));
-		Date deadline = Date.valueOf(LocalDate.parse("2022-03-15"));
-		List<Invoice> invoices = invoiceDB.getAllInvoices();
+		Date startComplDate = Date.valueOf(LocalDate.parse("2022-02-01"));
+		Date endComplDate = Date.valueOf(LocalDate.parse("2022-02-28"));
+		Date complDate = Date.valueOf(LocalDate.parse("2022-01-25"));
+		Date deadline = Date.valueOf(LocalDate.parse("2022-09-15"));
+
+		List<Invoice> invoices = invoiceDB.getInvoicesBetweenDatesByCompletionDate(startComplDate, endComplDate);
 		System.out.println(invoices);
-//		Invoice insertInvoice = invoiceDB.insertInvoice(new Invoice("3" ,complDate, deadline, 7000, false, true, 1, 3));
+//		Invoice insertInvoice = invoiceDB.insertInvoice(new Invoice("2022/BH-10" ,complDate, deadline, 90000, false, true, 2, 4));
 //		Invoice updateInvoice = invoiceDB.updateInvoice(new Invoice("3" ,complDate, deadline, 98700, false, true, 1, 3));
-//		boolean isInvoiceDeleted = invoiceDB.deleteInvoice("3");
 //		System.out.println(insertInvoice);
-//		System.out.println(isInvoiceDeleted);
 
 	}
 

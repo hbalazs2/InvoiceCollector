@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Invoice {
     private String id;
+    private Date creationDate;
     private Date completionDate;
     private Date paymentDeadline;
     private long grandTotal;
@@ -12,8 +13,9 @@ public class Invoice {
     private long partnersId;
     private long categoriesId;
 
-    public Invoice(String id, Date paymentDeadline, long grandTotal, boolean isIncoming, boolean isOutgoing, long partnersId, long categoriesId) {
+    public Invoice(String id, Date creationDate, Date paymentDeadline, long grandTotal, boolean isIncoming, boolean isOutgoing, long partnersId, long categoriesId) {
         this.id = id;
+        this.creationDate = creationDate;
         this.paymentDeadline = paymentDeadline;
         this.grandTotal = grandTotal;
         this.isIncoming = isIncoming;
@@ -22,8 +24,9 @@ public class Invoice {
         this.categoriesId = categoriesId;
     }
 
-    public Invoice(String id, Date completionDate, Date paymentDeadline, long grandTotal, boolean isIncoming, boolean isOutgoing, long partnersId, long categoriesId) {
+    public Invoice(String id, Date creationDate, Date completionDate, Date paymentDeadline, long grandTotal, boolean isIncoming, boolean isOutgoing, long partnersId, long categoriesId) {
         this.id = id;
+        this.creationDate = creationDate;
         this.completionDate = completionDate;
         this.paymentDeadline = paymentDeadline;
         this.grandTotal = grandTotal;
@@ -39,6 +42,14 @@ public class Invoice {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public Date getCompletionDate() {
@@ -65,20 +76,20 @@ public class Invoice {
         this.grandTotal = grandTotal;
     }
 
-    public boolean getIsIncoming() {
+    public boolean isIncoming() {
         return isIncoming;
     }
 
-    public void setIsIncoming(boolean incoming) {
-        this.isIncoming = incoming;
+    public void setIncoming(boolean incoming) {
+        isIncoming = incoming;
     }
 
-    public boolean getIsOutgoing() {
+    public boolean isOutgoing() {
         return isOutgoing;
     }
 
-    public void setIsOutgoing(boolean outgoing) {
-        this.isOutgoing = outgoing;
+    public void setOutgoing(boolean outgoing) {
+        isOutgoing = outgoing;
     }
 
     public long getPartnersId() {
@@ -100,14 +111,15 @@ public class Invoice {
     @Override
     public String toString() {
         return "Invoice{" +
-                "id='" + id + '\'' +
+                "id=" + id +
+                ", creationDate=" + creationDate +
                 ", completionDate=" + completionDate +
                 ", paymentDeadline=" + paymentDeadline +
                 ", grandTotal=" + grandTotal +
-                ", incoming=" + isIncoming +
-                ", outgoing=" + isOutgoing +
+                ", isIncoming=" + isIncoming +
+                ", isOutgoing=" + isOutgoing +
                 ", partnersId=" + partnersId +
-                ", naturesId=" + categoriesId +
+                ", categoriesId=" + categoriesId +
                 "}\n";
     }
 }

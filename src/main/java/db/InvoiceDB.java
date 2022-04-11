@@ -21,6 +21,7 @@ public class InvoiceDB {
             while (result.next()) {
                 invoice = new Invoice(
                         result.getString("id"),
+                        result.getDate("creation_date"),
                         result.getDate("completion_date"),
                         result.getDate("payment_deadline"),
                         result.getLong("grand_total"),
@@ -50,6 +51,7 @@ public class InvoiceDB {
                 invoice = new Invoice(
                         result.getString("id"),
                         result.getDate("completion_date"),
+                        result.getDate("creation_date"),
                         result.getDate("payment_deadline"),
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
@@ -64,18 +66,23 @@ public class InvoiceDB {
         return invoice;
     }
 
-    public Invoice getInvoiceByCategory(String category) {
+    public List<Invoice> getInvoicesByCategory(String category) {
 
-        String sql = "SELECT * FROM invoices WHERE id = ?";
-        Invoice invoice = null;
+        List<Invoice> invoices = new ArrayList<>();
+        String sql = "SELECT * FROM invoices " +
+                "JOIN categories " +
+                "ON invoices.categories_id = categories.id " +
+                "WHERE categories.name LIKE ?;";
+        Invoice invoice;
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, category);
+            preparedStatement.setString(1, "%" + category + "%");
             ResultSet result = preparedStatement.executeQuery();
-            if (result.next()) {
+            while (result.next()) {
                 invoice = new Invoice(
                         result.getString("id"),
+                        result.getDate("creation_date"),
                         result.getDate("completion_date"),
                         result.getDate("payment_deadline"),
                         result.getLong("grand_total"),
@@ -84,26 +91,61 @@ public class InvoiceDB {
                         result.getLong("partners_id"),
                         result.getLong("categories_id")
                 );
+                invoices.add(invoice);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return invoice;
+        return invoices;
+    }
+
+    public List<Invoice> getInvoicesBetweenDatesByCompletionDate(Date startCompDate, Date endCompDate) {
+
+        List<Invoice> invoices = new ArrayList<>();
+        String sql = "SELECT * FROM invoices " +
+                "WHERE completion_date " +
+                "BETWEEN ? AND ?;";
+        Invoice invoice;
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setDate(1, startCompDate);
+            preparedStatement.setDate(2, endCompDate);
+            ResultSet result = preparedStatement.executeQuery();
+            while (result.next()) {
+                invoice = new Invoice(
+                        result.getString("id"),
+                        result.getDate("creation_date"),
+                        result.getDate("completion_date"),
+                        result.getDate("payment_deadline"),
+                        result.getLong("grand_total"),
+                        result.getBoolean("incoming"),
+                        result.getBoolean("outgoing"),
+                        result.getLong("partners_id"),
+                        result.getLong("categories_id")
+                );
+                invoices.add(invoice);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return invoices;
     }
 
     public Invoice insertInvoice(Invoice invoice) {
-        String sql = "INSERT INTO invoices VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO invoices VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, invoice.getId());
-            preparedStatement.setDate(2, (Date) invoice.getCompletionDate());
-            preparedStatement.setDate(3, (Date) invoice.getPaymentDeadline());
-            preparedStatement.setLong(4, invoice.getGrandTotal());
-            preparedStatement.setBoolean(5, invoice.getIsIncoming());
-            preparedStatement.setBoolean(6, invoice.getIsOutgoing());
-            preparedStatement.setLong(7, invoice.getPartnersId());
-            preparedStatement.setLong(8, invoice.getCategoriesId());
+            preparedStatement.setDate(2, (Date) invoice.getCreationDate());
+            preparedStatement.setDate(3, (Date) invoice.getCompletionDate());
+            preparedStatement.setDate(4, (Date) invoice.getPaymentDeadline());
+            preparedStatement.setLong(5, invoice.getGrandTotal());
+            preparedStatement.setBoolean(6, invoice.isIncoming());
+            preparedStatement.setBoolean(7, invoice.isOutgoing());
+            preparedStatement.setLong(8, invoice.getPartnersId());
+            preparedStatement.setLong(9, invoice.getCategoriesId());
             preparedStatement.executeUpdate();
 
         } catch (Exception exception) {
@@ -126,14 +168,15 @@ public class InvoiceDB {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, invoice.getId());
-            preparedStatement.setDate(2, (Date) invoice.getCompletionDate());
-            preparedStatement.setDate(3, (Date) invoice.getPaymentDeadline());
-            preparedStatement.setLong(4, invoice.getGrandTotal());
-            preparedStatement.setBoolean(5, invoice.getIsIncoming());
-            preparedStatement.setBoolean(6, invoice.getIsOutgoing());
-            preparedStatement.setLong(7, invoice.getPartnersId());
-            preparedStatement.setLong(8, invoice.getCategoriesId());
-            preparedStatement.setString(9, invoice.getId());
+            preparedStatement.setDate(2, (Date) invoice.getCreationDate());
+            preparedStatement.setDate(3, (Date) invoice.getCompletionDate());
+            preparedStatement.setDate(4, (Date) invoice.getPaymentDeadline());
+            preparedStatement.setLong(5, invoice.getGrandTotal());
+            preparedStatement.setBoolean(6, invoice.isIncoming());
+            preparedStatement.setBoolean(7, invoice.isOutgoing());
+            preparedStatement.setLong(8, invoice.getPartnersId());
+            preparedStatement.setLong(9, invoice.getCategoriesId());
+            preparedStatement.setString(10, invoice.getId());
             preparedStatement.executeUpdate();
 
         } catch (Exception exception) {
