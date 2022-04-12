@@ -116,8 +116,8 @@ public class Invoice {
                 ", completionDate=" + completionDate +
                 ", paymentDeadline=" + paymentDeadline +
                 ", grandTotal=" + grandTotal +
-                ", isIncoming=" + isIncoming +
-                ", isOutgoing=" + isOutgoing +
+                ", incoming=" + isIncoming +
+                ", outgoing=" + isOutgoing +
                 ", partnersId=" + partnersId +
                 ", categoriesId=" + categoriesId +
                 "}\n";
