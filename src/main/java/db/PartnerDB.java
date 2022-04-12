@@ -157,6 +157,7 @@ public class PartnerDB {
             preparedStatement.setString(4, partner.getCity());
             preparedStatement.setString(5, partner.getAddress());
             preparedStatement.setDate(6, (Date) partner.getConnectionDate());
+            preparedStatement.executeUpdate();
 
             ResultSet result = preparedStatement.getGeneratedKeys();
             if (result.next()) {
@@ -199,7 +200,7 @@ public class PartnerDB {
         return getPartnerById(partner.getId());
     }
 
-    public Partner updatePartnersCity(long id, String city, String postalCode) {
+    public void updatePartnersCity(long id, String city, String postalCode) {
         String sql = "UPDATE partners SET city = ?, " +
                 "postal_code = ? " +
                 "WHERE id = ?;";
@@ -215,10 +216,10 @@ public class PartnerDB {
             exception.printStackTrace();
         }
 
-        return getPartnerById(id);
+//        return getPartnerById(id);
     }
 
-    public Partner updatePartnersAddress(long id, String address) {
+    public void updatePartnersAddress(long id, String address) {
         String sql = "UPDATE partners SET address = ? " +
                 "WHERE id = ?;";
 
@@ -232,10 +233,10 @@ public class PartnerDB {
             exception.printStackTrace();
         }
 
-        return getPartnerById(id);
+//        return getPartnerById(id);
     }
 
-    public Partner updatePartnersName(long id, String name) {
+    public void updatePartnersName(long id, String name) {
         String sql = "UPDATE partners SET name = ? " +
                 "WHERE id = ?;";
 
@@ -249,7 +250,7 @@ public class PartnerDB {
             exception.printStackTrace();
         }
 
-        return getPartnerById(id);
+//        return getPartnerById(id);
     }
 
     public boolean deletePartner(long id) {
