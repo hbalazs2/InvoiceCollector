@@ -2,10 +2,13 @@ package com.example.InvoiceCollector;
 
 import db.DBConnector;
 import db.InvoiceDB;
+import db.PartnerDB;
 import model.Invoice;
+import model.Partner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import javax.servlet.http.Part;
 import java.sql.Connection;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -21,18 +24,17 @@ public class InvoiceCollectorApplication {
 
 	public static void testDB() {
 //		Connection connection = DBConnector.getInstance().getConnection();
-		InvoiceDB invoiceDB = new InvoiceDB();
+		PartnerDB partnerDB = new PartnerDB();
 		Date startComplDate = Date.valueOf(LocalDate.parse("2022-02-16"));
-		Date endComplDate = Date.valueOf(LocalDate.parse("2023-02-28"));
-		Date complDate = Date.valueOf(LocalDate.parse("2022-01-25"));
-		Date creationDate = Date.valueOf(LocalDate.parse("2022-01-25"));
-		Date deadline = Date.valueOf(LocalDate.parse("2022-09-15"));
 
-//		List<Invoice> invoices = invoiceDB.getInvoicesByPartnerName("big");
-//		System.out.println(invoices);
-//		Invoice insertInvoice = invoiceDB.insertInvoice(new Invoice("2022/BH-10" ,complDate, deadline, 90000, false, true, 2, 4));
-		Invoice updateInvoice = invoiceDB.updateInvoiceCategories("ZS-2022/139", "Wages");
-		System.out.println(updateInvoice);
+		List<Partner> partners = partnerDB.getPartnersByCity("est");
+		System.out.println(partners);
+
+
+//		Partner partner = partnerDB.insertPartner(new Partner("Medium Ltd", "DE", "789634", "Berlin", "Hauptstrasse 23.", Date.valueOf(LocalDate.now())));
+//		System.out.println(partner);
+		boolean isDeleted = partnerDB.deletePartner(4);
+		System.out.println(isDeleted);
 
 	}
 

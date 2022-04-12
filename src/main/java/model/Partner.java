@@ -92,12 +92,11 @@ public class Partner {
     public String toString() {
         return "Partner{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", countryCode='" + countryCode + '\'' +
-                ", postalCode='" + postalCode + '\'' +
-                ", city='" + city + '\'' +
-                ", address='" + address + '\'' +
-                ", connectionDate=" + connectionDate +
-                '}';
+                ", name=" + name +
+                ", countryCode=" + countryCode +
+                ", postalCode=" + postalCode +
+                ", city=" + city +
+                ", address=" + address +
+                ", connectionDate=" + connectionDate + "\n";
     }
 }

@@ -476,15 +476,15 @@ public class InvoiceDB {
     }
 
     public Invoice updateInvoice(Invoice invoice) {
-        String sql = "UPDATE invoices SET `id` = ?, " +
-                "`completion_date` = ?, " +
-                "`payment_deadline` = ?, " +
-                "`grand_total` = ?, " +
-                "`incoming` = ?, " +
-                "`outgoing` = ?, " +
-                "`partners_id` = ?, " +
-                "`categories_id` = ? " +
-                "WHERE `id` = ?;";
+        String sql = "UPDATE invoices SET id = ?, " +
+                "completion_date = ?, " +
+                "payment_deadline = ?, " +
+                "grand_total = ?, " +
+                "incoming = ?, " +
+                "outgoing = ?, " +
+                "partners_id = ?, " +
+                "categories_id = ? " +
+                "WHERE id = ?;";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
