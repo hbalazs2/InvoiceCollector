@@ -67,6 +67,36 @@ public class InvoiceDB {
         return invoice;
     }
 
+    public List<Invoice> getInvoiceByIdLike(String id) {
+
+        String sql = "SELECT * FROM invoices WHERE id LIKE ?";
+        Invoice invoice;
+        List<Invoice> invoices = new ArrayList<>();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, "%" + id + "%");
+            ResultSet result = preparedStatement.executeQuery();
+            while (result.next()) {
+                invoice = new Invoice(
+                        result.getString("id"),
+                        result.getDate("completion_date"),
+                        result.getDate("creation_date"),
+                        result.getDate("payment_deadline"),
+                        result.getLong("grand_total"),
+                        result.getBoolean("incoming"),
+                        result.getBoolean("outgoing"),
+                        result.getLong("partners_id"),
+                        result.getLong("categories_id")
+                );
+                invoices.add(invoice);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return invoices;
+    }
+
     public List<Invoice> getInvoicesBetweenDatesByCompletionDate(Date startCompDate, Date endCompDate) {
 
         List<Invoice> invoices = new ArrayList<>();
