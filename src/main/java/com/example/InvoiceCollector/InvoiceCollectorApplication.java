@@ -19,12 +19,14 @@ public class InvoiceCollectorApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(InvoiceCollectorApplication.class, args);
-		testDB();
+//		testDB();
 	}
 
 	public static void testDB() {
-		PartnerDB partnerDB = new PartnerDB();
+		InvoiceDB invoiceDB = new InvoiceDB();
 		Date date = Date.valueOf(LocalDate.parse("2022-02-16"));
+		List<Invoice> invoices = invoiceDB.getUnpaidInvoices();
+		System.out.println(invoices);
 
 	}
 }

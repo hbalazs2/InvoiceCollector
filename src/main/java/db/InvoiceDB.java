@@ -228,6 +228,37 @@ public class InvoiceDB {
         return invoices;
     }
 
+    public List<Invoice> getUnpaidInvoices() {
+
+        List<Invoice> invoices = new ArrayList<>();
+        String sql = "SELECT * FROM invoices " +
+                "WHERE completion_date IS NULL;";
+        Invoice invoice;
+
+        try {
+            Statement statement = connection.prepareStatement(sql);
+
+            ResultSet result = statement.executeQuery(sql);
+            while (result.next()) {
+                invoice = new Invoice(
+                        result.getString("id"),
+                        result.getDate("creation_date"),
+//                        result.getDate("completion_date"),
+                        result.getDate("payment_deadline"),
+                        result.getLong("grand_total"),
+                        result.getBoolean("incoming"),
+                        result.getBoolean("outgoing"),
+                        result.getLong("partners_id"),
+                        result.getLong("categories_id")
+                );
+                invoices.add(invoice);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return invoices;
+    }
+
     public List<Invoice> getInvoicesByGrandTotalUnder(long limit) {
 
         List<Invoice> invoices = new ArrayList<>();

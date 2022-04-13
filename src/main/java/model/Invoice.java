@@ -13,6 +13,7 @@ public class Invoice {
     private long partnersId;
     private long categoriesId;
 
+    // constructor without completion date - invoices without completion date are not paid
     public Invoice(String id, Date creationDate, Date paymentDeadline, long grandTotal, boolean isIncoming, boolean isOutgoing, long partnersId, long categoriesId) {
         this.id = id;
         this.creationDate = creationDate;
