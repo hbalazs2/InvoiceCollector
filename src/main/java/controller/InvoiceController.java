@@ -241,8 +241,6 @@ public class InvoiceController {
         long partnersId = (Integer) body.get("partnersId");
         long categoryId = (Integer) body.get("categoryId");
 
-//        Date creationDate2 = Date.valueOf(creationDate1);
-
         Invoice insertedInvoice = invoiceDB.insertInvoice(new Invoice(id, creationDate, completionDate, paymentDeadline, grandTotal,
                 isIncoming, isOutgoing, partnersId, categoryId));
 
