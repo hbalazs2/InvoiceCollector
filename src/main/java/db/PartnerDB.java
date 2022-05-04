@@ -66,7 +66,7 @@ public class PartnerDB {
 
         String sql = "SELECT * FROM partners WHERE name LIKE ?";
         List<Partner> partners = new ArrayList<>();
-        Partner partner = null;
+        Partner partner;
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -87,7 +87,12 @@ public class PartnerDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return partners;
+        if (partners.size() > 0) {
+            return partners;
+        }
+        else {
+            return null;
+        }
     }
 
     public List<Partner> getPartnersByCountryCode(String countryCode) {
@@ -115,7 +120,12 @@ public class PartnerDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return partners;
+        if (partners.size() > 0) {
+            return partners;
+        }
+        else {
+            return null;
+        }
     }
 
     public List<Partner> getPartnersByCity(String city) {
@@ -143,7 +153,12 @@ public class PartnerDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return partners;
+        if (partners.size() > 0) {
+            return partners;
+        }
+        else {
+            return null;
+        }
     }
 
     public Partner insertPartner(Partner partner) {
@@ -172,7 +187,7 @@ public class PartnerDB {
     }
 
     public Partner updatePartner(Partner partner) {
-        String sql = "UPDATE partners SET id = ? " +
+        String sql = "UPDATE partners SET " +
                 "name = ?, " +
                 "country_code = ?, " +
                 "postal_code = ?, " +
@@ -183,14 +198,14 @@ public class PartnerDB {
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setLong(1, partner.getId());
-            preparedStatement.setString(2, partner.getName());
-            preparedStatement.setString(3, partner.getCountryCode());
-            preparedStatement.setString(4, partner.getPostalCode());
-            preparedStatement.setString(5, partner.getCity());
-            preparedStatement.setString(6, partner.getAddress());
-            preparedStatement.setDate(7, (Date) partner.getConnectionDate());
-            preparedStatement.setLong(8, partner.getId());
+//            preparedStatement.setLong(1, partner.getId());
+            preparedStatement.setString(1, partner.getName());
+            preparedStatement.setString(2, partner.getCountryCode());
+            preparedStatement.setString(3, partner.getPostalCode());
+            preparedStatement.setString(4, partner.getCity());
+            preparedStatement.setString(5, partner.getAddress());
+            preparedStatement.setDate(6, (Date) partner.getConnectionDate());
+            preparedStatement.setLong(7, partner.getId());
             preparedStatement.executeUpdate();
 
         } catch (Exception exception) {
@@ -200,7 +215,7 @@ public class PartnerDB {
         return getPartnerById(partner.getId());
     }
 
-    public void updatePartnersCity(long id, String city, String postalCode) {
+    public Partner updatePartnersCity(long id, String city, String postalCode) {
         String sql = "UPDATE partners SET city = ?, " +
                 "postal_code = ? " +
                 "WHERE id = ?;";
@@ -216,10 +231,10 @@ public class PartnerDB {
             exception.printStackTrace();
         }
 
-//        return getPartnerById(id);
+        return getPartnerById(id);
     }
 
-    public void updatePartnersAddress(long id, String address) {
+    public Partner updatePartnersAddress(long id, String address) {
         String sql = "UPDATE partners SET address = ? " +
                 "WHERE id = ?;";
 
@@ -233,10 +248,10 @@ public class PartnerDB {
             exception.printStackTrace();
         }
 
-//        return getPartnerById(id);
+        return getPartnerById(id);
     }
 
-    public void updatePartnersName(long id, String name) {
+    public Partner updatePartnersName(long id, String name) {
         String sql = "UPDATE partners SET name = ? " +
                 "WHERE id = ?;";
 
@@ -250,7 +265,7 @@ public class PartnerDB {
             exception.printStackTrace();
         }
 
-//        return getPartnerById(id);
+        return getPartnerById(id);
     }
 
     public boolean deletePartner(long id) {

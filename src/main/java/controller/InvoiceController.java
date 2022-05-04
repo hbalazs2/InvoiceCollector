@@ -27,28 +27,30 @@ public class InvoiceController {
     }
 
     @GetMapping("/invoice")
-    public Map<String, Object> getInvoiceById(@RequestParam(defaultValue = "") String id) {
+    public Object getInvoiceById(@RequestParam(defaultValue = "") String id) {
         InvoiceDB invoiceDB = new InvoiceDB();
         System.out.println("ID: "+id);
         List<Invoice> invoices = new ArrayList<>();
         Invoice invoice = invoiceDB.getInvoiceById(id);
-        Map<String, Object> result = new HashMap<>();
+//        Map<String, Object> result = new HashMap<>();
         if (invoice == null) {
             invoices = invoiceDB.getInvoiceByIdLike(id);
-            if (invoices == null) {
-                result.put("Message", "No invoices found with ID: " + id + ".");
-            } else {
-                result.put("Message", "More invoices found with ID: " + id + ".");
-                result.put("invoices", invoices);
-            }
+//            if (invoices == null) {
+//                result.put("Message", "No invoices found with ID: " + id + ".");
+//            } else {
+//                result.put("Message", "More invoices found with ID: " + id + ".");
+//                result.put("invoices", invoices);
+//            }
         } else {
-            result.put("invoice", invoice);
+            invoices.add(invoice);
+//            result.put("invoices", invoice);
         }
-        return result;
+        return invoices;
     }
 
     @GetMapping("/invoiceCod")
     public Map<String, Object> getInvoicesBetweenDatesByCompletionDate(@RequestParam(defaultValue = "") Date startCompDate, Date endCompDate) {
+        System.out.println("IM IN");
         InvoiceDB invoiceDB = new InvoiceDB();
         List<Invoice> invoices = invoiceDB.getInvoicesBetweenDatesByCompletionDate(startCompDate, endCompDate);
         Map<String, Object> result = new HashMap<>();
@@ -59,6 +61,7 @@ public class InvoiceController {
             result.put("Message", String.format("Invoices found with completion date between: %s and %s.", startCompDate, endCompDate));
             result.put("invoices", invoices);
         }
+        System.out.println(result);
         return result;
     }
 
