@@ -12,6 +12,8 @@ public class Invoice {
     private boolean isOutgoing;
     private long partnersId;
     private long categoriesId;
+    private String partnerName;
+    private String category;
 
     // constructor without completion date - invoices without completion date are not paid
     public Invoice(String id, Date creationDate, Date paymentDeadline, long grandTotal, boolean isIncoming, boolean isOutgoing, long partnersId, long categoriesId) {
@@ -35,6 +37,18 @@ public class Invoice {
         this.isOutgoing = isOutgoing;
         this.partnersId = partnersId;
         this.categoriesId = categoriesId;
+    }
+
+    public Invoice(String id, Date creationDate, Date completionDate, Date paymentDeadline, long grandTotal, boolean isIncoming, boolean isOutgoing, String partnerName, String category) {
+        this.id = id;
+        this.creationDate = creationDate;
+        this.completionDate = completionDate;
+        this.paymentDeadline = paymentDeadline;
+        this.grandTotal = grandTotal;
+        this.isIncoming = isIncoming;
+        this.isOutgoing = isOutgoing;
+        this.partnerName = partnerName;
+        this.category = category;
     }
 
     public String getId() {
@@ -107,6 +121,22 @@ public class Invoice {
 
     public void setCategoriesId(long categoriesId) {
         this.categoriesId = categoriesId;
+    }
+
+    public String getPartnerName() {
+        return partnerName;
+    }
+
+    public void setPartnerName(String partnerName) {
+        this.partnerName = partnerName;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     @Override
