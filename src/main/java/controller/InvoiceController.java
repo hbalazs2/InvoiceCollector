@@ -230,7 +230,7 @@ public class InvoiceController {
         return result;
     }
 
-    @PostMapping("/invoices")
+    @PostMapping("/invoices/insert")
     public Object insertInvoice(@RequestBody Map<String, Object> body) {
         InvoiceDB invoiceDB = new InvoiceDB();
 
@@ -241,11 +241,11 @@ public class InvoiceController {
         long grandTotal = (Integer) body.get("grandTotal");
         boolean isIncoming = (Boolean) body.get("incoming");
         boolean isOutgoing = (Boolean) body.get("outgoing");
-        long partnersId = (Integer) body.get("partnersId");
-        long categoryId = (Integer) body.get("categoryId");
+        String partnerName = (String) body.get("partnerName");
+        String category = (String) body.get("category");
 
         Invoice insertedInvoice = invoiceDB.insertInvoice(new Invoice(id, creationDate, completionDate, paymentDeadline, grandTotal,
-                isIncoming, isOutgoing, partnersId, categoryId));
+                isIncoming, isOutgoing, partnerName, category));
 
         if (insertedInvoice == null) {
             return "No invoice was inserted";
@@ -255,7 +255,7 @@ public class InvoiceController {
         }
     }
 
-    @PutMapping("/invoices")
+    @PutMapping("/invoices/update")
     public Object updateInvoice(@RequestBody Map<String, Object> body) {
         InvoiceDB invoiceDB = new InvoiceDB();
 
@@ -266,11 +266,11 @@ public class InvoiceController {
         long grandTotal = (Integer) body.get("grandTotal");
         boolean isIncoming = (Boolean) body.get("incoming");
         boolean isOutgoing = (Boolean) body.get("outgoing");
-        long partnersId = (Integer) body.get("partnersId");
-        long categoryId = (Integer) body.get("categoryId");
+        String partnerName = (String) body.get("partnerName");
+        String category = (String) body.get("category");
 
         Invoice updatedInvoice = invoiceDB.updateInvoice(new Invoice(id, creationDate, completionDate, paymentDeadline, grandTotal,
-                isIncoming, isOutgoing, partnersId, categoryId));
+                isIncoming, isOutgoing, partnerName, category));
 
         if (updatedInvoice == null) {
             return "No invoice was updated";
@@ -300,9 +300,7 @@ public class InvoiceController {
         InvoiceDB invoiceDB = new InvoiceDB();
 
         String id = (String) body.get("id");
-        System.out.println(id);
         String category = (String) body.get("category");
-        System.out.println(category);
 
         Invoice updatedInvoice = invoiceDB.updateInvoiceCategories(id, category);
 

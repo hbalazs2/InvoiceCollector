@@ -56,7 +56,22 @@ public class InvoiceDB {
 
     public Invoice getInvoiceById(String id) {
 
-        String sql = "SELECT * FROM invoices WHERE id = ?";
+        String sql = "SELECT " +
+                "invoices.id, " +
+                "invoices.creation_date, " +
+                "invoices.completion_date, " +
+                "invoices.payment_deadline, " +
+                "invoices.grand_total, " +
+                "invoices.incoming, " +
+                "invoices.outgoing, " +
+                "partners.name AS partner_name, " +
+                "categories.name AS category_name " +
+                "FROM invoices " +
+                "JOIN partners " +
+                "ON invoices.partners_id = partners.id " +
+                "JOIN categories " +
+                "ON invoices.categories_id = categories.id " +
+                "WHERE id = ?";
         Invoice invoice = null;
 
         try {
@@ -72,8 +87,8 @@ public class InvoiceDB {
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
                         result.getBoolean("outgoing"),
-                        result.getLong("partners_id"),
-                        result.getLong("categories_id")
+                        result.getString("partner_name"),
+                        result.getString("category_name")
                 );
             }
         } catch (SQLException e) {
@@ -84,7 +99,22 @@ public class InvoiceDB {
 
     public List<Invoice> getInvoiceByIdLike(String id) {
 
-        String sql = "SELECT * FROM invoices WHERE id LIKE ?";
+        String sql = "SELECT " +
+                "invoices.id, " +
+                "invoices.creation_date, " +
+                "invoices.completion_date, " +
+                "invoices.payment_deadline, " +
+                "invoices.grand_total, " +
+                "invoices.incoming, " +
+                "invoices.outgoing, " +
+                "partners.name AS partner_name, " +
+                "categories.name AS category_name " +
+                "FROM invoices " +
+                "JOIN partners " +
+                "ON invoices.partners_id = partners.id " +
+                "JOIN categories " +
+                "ON invoices.categories_id = categories.id " +
+                "WHERE id LIKE ?";
         Invoice invoice;
         List<Invoice> invoices = new ArrayList<>();
 
@@ -101,8 +131,8 @@ public class InvoiceDB {
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
                         result.getBoolean("outgoing"),
-                        result.getLong("partners_id"),
-                        result.getLong("categories_id")
+                        result.getString("partner_name"),
+                        result.getString("category_name")
                 );
                 invoices.add(invoice);
             }
@@ -162,7 +192,21 @@ public class InvoiceDB {
     public List<Invoice> getInvoicesBetweenDatesByCreationDate(Date startCreationDate, Date endCreationDate) {
 
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM invoices " +
+        String sql = "SELECT " +
+                "invoices.id, " +
+                "invoices.creation_date, " +
+                "invoices.completion_date, " +
+                "invoices.payment_deadline, " +
+                "invoices.grand_total, " +
+                "invoices.incoming, " +
+                "invoices.outgoing, " +
+                "partners.name AS partner_name, " +
+                "categories.name AS category_name " +
+                "FROM invoices " +
+                "JOIN partners " +
+                "ON invoices.partners_id = partners.id " +
+                "JOIN categories " +
+                "ON invoices.categories_id = categories.id " +
                 "WHERE creation_date " +
                 "BETWEEN ? AND ?;";
         Invoice invoice;
@@ -181,8 +225,8 @@ public class InvoiceDB {
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
                         result.getBoolean("outgoing"),
-                        result.getLong("partners_id"),
-                        result.getLong("categories_id")
+                        result.getString("partner_name"),
+                        result.getString("category_name")
                 );
                 invoices.add(invoice);
             }
@@ -195,7 +239,21 @@ public class InvoiceDB {
     public List<Invoice> getInvoicesBetweenDatesByDeadlineDate(Date startDeadlineDate, Date endDeadlineDate) {
 
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM invoices " +
+        String sql = "SELECT " +
+                "invoices.id, " +
+                "invoices.creation_date, " +
+                "invoices.completion_date, " +
+                "invoices.payment_deadline, " +
+                "invoices.grand_total, " +
+                "invoices.incoming, " +
+                "invoices.outgoing, " +
+                "partners.name AS partner_name, " +
+                "categories.name AS category_name " +
+                "FROM invoices " +
+                "JOIN partners " +
+                "ON invoices.partners_id = partners.id " +
+                "JOIN categories " +
+                "ON invoices.categories_id = categories.id " +
                 "WHERE payment_deadline " +
                 "BETWEEN ? AND ?;";
         Invoice invoice;
@@ -214,8 +272,8 @@ public class InvoiceDB {
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
                         result.getBoolean("outgoing"),
-                        result.getLong("partners_id"),
-                        result.getLong("categories_id")
+                        result.getString("partner_name"),
+                        result.getString("category_name")
                 );
                 invoices.add(invoice);
             }
@@ -229,7 +287,21 @@ public class InvoiceDB {
 
         Date now = Date.valueOf(LocalDate.now());
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM invoices " +
+        String sql = "SELECT " +
+                "invoices.id, " +
+                "invoices.creation_date, " +
+                "invoices.completion_date, " +
+                "invoices.payment_deadline, " +
+                "invoices.grand_total, " +
+                "invoices.incoming, " +
+                "invoices.outgoing, " +
+                "partners.name AS partner_name, " +
+                "categories.name AS category_name " +
+                "FROM invoices " +
+                "JOIN partners " +
+                "ON invoices.partners_id = partners.id " +
+                "JOIN categories " +
+                "ON invoices.categories_id = categories.id " +
                 "WHERE payment_deadline <= ?;";
         Invoice invoice;
 
@@ -246,8 +318,8 @@ public class InvoiceDB {
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
                         result.getBoolean("outgoing"),
-                        result.getLong("partners_id"),
-                        result.getLong("categories_id")
+                        result.getString("partner_name"),
+                        result.getString("category_name")
                 );
                 invoices.add(invoice);
             }
@@ -260,7 +332,21 @@ public class InvoiceDB {
     public List<Invoice> getUnpaidInvoices() {
 
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM invoices " +
+        String sql = "SELECT " +
+                "invoices.id, " +
+                "invoices.creation_date, " +
+                "invoices.completion_date, " +
+                "invoices.payment_deadline, " +
+                "invoices.grand_total, " +
+                "invoices.incoming, " +
+                "invoices.outgoing, " +
+                "partners.name AS partner_name, " +
+                "categories.name AS category_name " +
+                "FROM invoices " +
+                "JOIN partners " +
+                "ON invoices.partners_id = partners.id " +
+                "JOIN categories " +
+                "ON invoices.categories_id = categories.id " +
                 "WHERE completion_date IS NULL;";
         Invoice invoice;
 
@@ -277,8 +363,8 @@ public class InvoiceDB {
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
                         result.getBoolean("outgoing"),
-                        result.getLong("partners_id"),
-                        result.getLong("categories_id")
+                        result.getString("partner_name"),
+                        result.getString("category_name")
                 );
                 invoices.add(invoice);
             }
@@ -291,7 +377,21 @@ public class InvoiceDB {
     public List<Invoice> getInvoicesByGrandTotalUnder(long limit) {
 
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM invoices " +
+        String sql = "SELECT " +
+                "invoices.id, " +
+                "invoices.creation_date, " +
+                "invoices.completion_date, " +
+                "invoices.payment_deadline, " +
+                "invoices.grand_total, " +
+                "invoices.incoming, " +
+                "invoices.outgoing, " +
+                "partners.name AS partner_name, " +
+                "categories.name AS category_name " +
+                "FROM invoices " +
+                "JOIN partners " +
+                "ON invoices.partners_id = partners.id " +
+                "JOIN categories " +
+                "ON invoices.categories_id = categories.id " +
                 "WHERE grand_total <= ?;";
         Invoice invoice;
 
@@ -308,8 +408,8 @@ public class InvoiceDB {
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
                         result.getBoolean("outgoing"),
-                        result.getLong("partners_id"),
-                        result.getLong("categories_id")
+                        result.getString("partner_name"),
+                        result.getString("category_name")
                 );
                 invoices.add(invoice);
             }
@@ -322,7 +422,21 @@ public class InvoiceDB {
     public List<Invoice> getInvoicesByGrandTotalOver(long limit) {
 
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM invoices " +
+        String sql = "SELECT " +
+                "invoices.id, " +
+                "invoices.creation_date, " +
+                "invoices.completion_date, " +
+                "invoices.payment_deadline, " +
+                "invoices.grand_total, " +
+                "invoices.incoming, " +
+                "invoices.outgoing, " +
+                "partners.name AS partner_name, " +
+                "categories.name AS category_name " +
+                "FROM invoices " +
+                "JOIN partners " +
+                "ON invoices.partners_id = partners.id " +
+                "JOIN categories " +
+                "ON invoices.categories_id = categories.id " +
                 "WHERE grand_total >= ?;";
         Invoice invoice;
 
@@ -339,8 +453,8 @@ public class InvoiceDB {
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
                         result.getBoolean("outgoing"),
-                        result.getLong("partners_id"),
-                        result.getLong("categories_id")
+                        result.getString("partner_name"),
+                        result.getString("category_name")
                 );
                 invoices.add(invoice);
             }
@@ -353,7 +467,21 @@ public class InvoiceDB {
     public List<Invoice> getInvoicesByGrandTotalBetween(long minLimit, long maxLimit) {
 
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM invoices " +
+        String sql = "SELECT " +
+                "invoices.id, " +
+                "invoices.creation_date, " +
+                "invoices.completion_date, " +
+                "invoices.payment_deadline, " +
+                "invoices.grand_total, " +
+                "invoices.incoming, " +
+                "invoices.outgoing, " +
+                "partners.name AS partner_name, " +
+                "categories.name AS category_name " +
+                "FROM invoices " +
+                "JOIN partners " +
+                "ON invoices.partners_id = partners.id " +
+                "JOIN categories " +
+                "ON invoices.categories_id = categories.id " +
                 "WHERE grand_total BETWEEN ? AND ?;";
         Invoice invoice;
 
@@ -371,8 +499,8 @@ public class InvoiceDB {
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
                         result.getBoolean("outgoing"),
-                        result.getLong("partners_id"),
-                        result.getLong("categories_id")
+                        result.getString("partner_name"),
+                        result.getString("category_name")
                 );
                 invoices.add(invoice);
             }
@@ -385,7 +513,21 @@ public class InvoiceDB {
     public List<Invoice> getIncomingInvoices() {
 
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM invoices " +
+        String sql = "SELECT " +
+                "invoices.id, " +
+                "invoices.creation_date, " +
+                "invoices.completion_date, " +
+                "invoices.payment_deadline, " +
+                "invoices.grand_total, " +
+                "invoices.incoming, " +
+                "invoices.outgoing, " +
+                "partners.name AS partner_name, " +
+                "categories.name AS category_name " +
+                "FROM invoices " +
+                "JOIN partners " +
+                "ON invoices.partners_id = partners.id " +
+                "JOIN categories " +
+                "ON invoices.categories_id = categories.id " +
                 "WHERE incoming = true;";
         Invoice invoice;
 
@@ -401,8 +543,8 @@ public class InvoiceDB {
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
                         result.getBoolean("outgoing"),
-                        result.getLong("partners_id"),
-                        result.getLong("categories_id")
+                        result.getString("partner_name"),
+                        result.getString("category_name")
                 );
                 invoices.add(invoice);
             }
@@ -415,7 +557,21 @@ public class InvoiceDB {
     public List<Invoice> getOutgoingInvoices() {
 
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM invoices " +
+        String sql = "SELECT " +
+                "invoices.id, " +
+                "invoices.creation_date, " +
+                "invoices.completion_date, " +
+                "invoices.payment_deadline, " +
+                "invoices.grand_total, " +
+                "invoices.incoming, " +
+                "invoices.outgoing, " +
+                "partners.name AS partner_name, " +
+                "categories.name AS category_name " +
+                "FROM invoices " +
+                "JOIN partners " +
+                "ON invoices.partners_id = partners.id " +
+                "JOIN categories " +
+                "ON invoices.categories_id = categories.id " +
                 "WHERE outgoing = true;";
         Invoice invoice;
 
@@ -431,8 +587,8 @@ public class InvoiceDB {
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
                         result.getBoolean("outgoing"),
-                        result.getLong("partners_id"),
-                        result.getLong("categories_id")
+                        result.getString("partner_name"),
+                        result.getString("category_name")
                 );
                 invoices.add(invoice);
             }
@@ -445,10 +601,22 @@ public class InvoiceDB {
     public List<Invoice> getInvoicesByPartnerName(String partnerName) {
 
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT invoices.* FROM invoices " +
+        String sql = "SELECT " +
+                "invoices.id, " +
+                "invoices.creation_date, " +
+                "invoices.completion_date, " +
+                "invoices.payment_deadline, " +
+                "invoices.grand_total, " +
+                "invoices.incoming, " +
+                "invoices.outgoing, " +
+                "partners.name AS partner_name, " +
+                "categories.name AS category_name " +
+                "FROM invoices " +
                 "JOIN partners " +
                 "ON invoices.partners_id = partners.id " +
-                "WHERE partners.name LIKE ?;";
+                "JOIN categories " +
+                "ON invoices.categories_id = categories.id " +
+                "WHERE partner_name LIKE ?;";
         Invoice invoice;
 
         try {
@@ -464,8 +632,8 @@ public class InvoiceDB {
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
                         result.getBoolean("outgoing"),
-                        result.getLong("partners_id"),
-                        result.getLong("categories_id")
+                        result.getString("partner_name"),
+                        result.getString("category_name")
                 );
                 invoices.add(invoice);
             }
@@ -478,10 +646,22 @@ public class InvoiceDB {
     public List<Invoice> getInvoicesByCategory(String category) {
 
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM invoices " +
+        String sql = "SELECT " +
+                "invoices.id, " +
+                "invoices.creation_date, " +
+                "invoices.completion_date, " +
+                "invoices.payment_deadline, " +
+                "invoices.grand_total, " +
+                "invoices.incoming, " +
+                "invoices.outgoing, " +
+                "partners.name AS partner_name, " +
+                "categories.name AS category_name " +
+                "FROM invoices " +
+                "JOIN partners " +
+                "ON invoices.partners_id = partners.id " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "WHERE categories.name LIKE ?;";
+                "WHERE category_name LIKE ?;";
         Invoice invoice;
 
         try {
@@ -497,8 +677,8 @@ public class InvoiceDB {
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
                         result.getBoolean("outgoing"),
-                        result.getLong("partners_id"),
-                        result.getLong("categories_id")
+                        result.getString("partner_name"),
+                        result.getString("category_name")
                 );
                 invoices.add(invoice);
             }
@@ -509,7 +689,12 @@ public class InvoiceDB {
     }
 
     public Invoice insertInvoice(Invoice invoice) {
-        String sql = "INSERT INTO invoices VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO invoices VALUES " +
+                "(?, ?, ?, ?, ?, ?, ?, " +
+                "(SELECT partners.id FROM invoicecollector.partners " +
+                "WHERE partners.name = ?)," +
+                "(SELECT categories.id FROM invoicecollector.categories " +
+                "WHERE categories.name = ?));";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -520,8 +705,8 @@ public class InvoiceDB {
             preparedStatement.setLong(5, invoice.getGrandTotal());
             preparedStatement.setBoolean(6, invoice.isIncoming());
             preparedStatement.setBoolean(7, invoice.isOutgoing());
-            preparedStatement.setLong(8, invoice.getPartnersId());
-            preparedStatement.setLong(9, invoice.getCategoriesId());
+            preparedStatement.setString(8, invoice.getPartnerName());
+            preparedStatement.setString(9, invoice.getPartnerName());
             preparedStatement.executeUpdate();
 
         } catch (Exception exception) {
@@ -572,8 +757,8 @@ public class InvoiceDB {
                 "grand_total = ?, " +
                 "incoming = ?, " +
                 "outgoing = ?, " +
-                "partners_id = ?, " +
-                "categories_id = ? " +
+                "partners_id = (SELECT partners.id FROM invoicecollector.partners WHERE partners.name = ?), " +
+                "categories_id = (SELECT categories.id FROM invoicecollector.categories WHERE categories.name = ?) " +
                 "WHERE id = ?;";
 
         try {
@@ -585,8 +770,8 @@ public class InvoiceDB {
             preparedStatement.setLong(5, invoice.getGrandTotal());
             preparedStatement.setBoolean(6, invoice.isIncoming());
             preparedStatement.setBoolean(7, invoice.isOutgoing());
-            preparedStatement.setLong(8, invoice.getPartnersId());
-            preparedStatement.setLong(9, invoice.getCategoriesId());
+            preparedStatement.setString(8, invoice.getPartnerName());
+            preparedStatement.setString(9, invoice.getCategory());
             preparedStatement.setString(10, invoice.getId());
             preparedStatement.executeUpdate();
 

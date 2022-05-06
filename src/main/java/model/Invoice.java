@@ -27,6 +27,17 @@ public class Invoice {
         this.categoriesId = categoriesId;
     }
 
+    public Invoice(String id, Date creationDate, Date paymentDeadline, long grandTotal, boolean isIncoming, boolean isOutgoing, String partnerName, String category) {
+        this.id = id;
+        this.creationDate = creationDate;
+        this.paymentDeadline = paymentDeadline;
+        this.grandTotal = grandTotal;
+        this.isIncoming = isIncoming;
+        this.isOutgoing = isOutgoing;
+        this.partnerName = partnerName;
+        this.category = category;
+    }
+
     public Invoice(String id, Date creationDate, Date completionDate, Date paymentDeadline, long grandTotal, boolean isIncoming, boolean isOutgoing, long partnersId, long categoriesId) {
         this.id = id;
         this.creationDate = creationDate;
