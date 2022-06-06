@@ -71,7 +71,7 @@ public class InvoiceDB {
                 "ON invoices.partners_id = partners.id " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "WHERE id = ?";
+                "WHERE invoices.id = ?";
         Invoice invoice = null;
 
         try {
@@ -98,7 +98,6 @@ public class InvoiceDB {
     }
 
     public List<Invoice> getInvoiceByIdLike(String id) {
-
         String sql = "SELECT " +
                 "invoices.id, " +
                 "invoices.creation_date, " +
@@ -114,7 +113,7 @@ public class InvoiceDB {
                 "ON invoices.partners_id = partners.id " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "WHERE id LIKE ?";
+                "WHERE invoices.id LIKE ?";
         Invoice invoice;
         List<Invoice> invoices = new ArrayList<>();
 
@@ -160,7 +159,7 @@ public class InvoiceDB {
                 "ON invoices.partners_id = partners.id " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "WHERE completion_date " +
+                "WHERE invoices.completion_date " +
                 "BETWEEN ? AND ?;";
         Invoice invoice;
 
@@ -207,7 +206,7 @@ public class InvoiceDB {
                 "ON invoices.partners_id = partners.id " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "WHERE creation_date " +
+                "WHERE invoices.creation_date " +
                 "BETWEEN ? AND ?;";
         Invoice invoice;
 
@@ -254,7 +253,7 @@ public class InvoiceDB {
                 "ON invoices.partners_id = partners.id " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "WHERE payment_deadline " +
+                "WHERE invoices.payment_deadline " +
                 "BETWEEN ? AND ?;";
         Invoice invoice;
 
@@ -302,7 +301,7 @@ public class InvoiceDB {
                 "ON invoices.partners_id = partners.id " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "WHERE payment_deadline <= ?;";
+                "WHERE invoices.payment_deadline <= ?;";
         Invoice invoice;
 
         try {
@@ -347,7 +346,7 @@ public class InvoiceDB {
                 "ON invoices.partners_id = partners.id " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "WHERE completion_date IS NULL;";
+                "WHERE invoices.completion_date IS NULL;";
         Invoice invoice;
 
         try {
@@ -392,7 +391,7 @@ public class InvoiceDB {
                 "ON invoices.partners_id = partners.id " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "WHERE grand_total <= ?;";
+                "WHERE invoices.grand_total <= ?;";
         Invoice invoice;
 
         try {
@@ -437,7 +436,7 @@ public class InvoiceDB {
                 "ON invoices.partners_id = partners.id " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "WHERE grand_total >= ?;";
+                "WHERE invoices.grand_total >= ?;";
         Invoice invoice;
 
         try {
@@ -482,7 +481,8 @@ public class InvoiceDB {
                 "ON invoices.partners_id = partners.id " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "WHERE grand_total BETWEEN ? AND ?;";
+                "WHERE invoices.grand_total " +
+                "BETWEEN ? AND ?;";
         Invoice invoice;
 
         try {
@@ -528,7 +528,7 @@ public class InvoiceDB {
                 "ON invoices.partners_id = partners.id " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "WHERE incoming = true;";
+                "WHERE invoices.incoming = true;";
         Invoice invoice;
 
         try {
@@ -572,7 +572,7 @@ public class InvoiceDB {
                 "ON invoices.partners_id = partners.id " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "WHERE outgoing = true;";
+                "WHERE invoices.outgoing = true;";
         Invoice invoice;
 
         try {
@@ -716,8 +716,9 @@ public class InvoiceDB {
     }
 
     public Invoice updateInvoiceCompletionDate(String id, Date completionDate) {
-        String sql = "UPDATE invoices SET `completion_date` = ? " +
-                "WHERE `id` = ?;";
+        String sql = "UPDATE invoices " +
+                "SET completion_date = ? " +
+                "WHERE invoices.id = ?;";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -735,7 +736,8 @@ public class InvoiceDB {
         String sql = "UPDATE invoices " +
                 "JOIN categories " +
                 "ON invoices.categories_id = categories.id " +
-                "SET invoices.categories_id = (SELECT id FROM categories WHERE categories.name LIKE ?) " +
+                "SET invoices.categories_id = " +
+                "(SELECT id FROM categories WHERE categories.name LIKE ?) " +
                 "WHERE invoices.id = ?;";
 
         try {
@@ -759,7 +761,7 @@ public class InvoiceDB {
                 "outgoing = ?, " +
                 "partners_id = (SELECT partners.id FROM invoicecollector.partners WHERE partners.name = ?), " +
                 "categories_id = (SELECT categories.id FROM invoicecollector.categories WHERE categories.name = ?) " +
-                "WHERE id = ?;";
+                "WHERE invoices.id = ?;";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -782,7 +784,8 @@ public class InvoiceDB {
     }
 
     public boolean deleteInvoice(String id) {
-        String sql = "DELETE FROM invoices WHERE id = ?";
+        String sql = "DELETE FROM invoices " +
+                "WHERE invoices.id = ?";
         int deletedRow = -1;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
