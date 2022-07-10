@@ -3,32 +3,31 @@ package db;
 import model.Invoice;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class InvoiceDB {
     private Connection connection = DBConnector.getInstance().getConnection();
+    private String baseSql = "SELECT " +
+            "invoices.id, " +
+            "invoices.creation_date, " +
+            "invoices.completion_date, " +
+            "invoices.payment_deadline, " +
+            "invoices.grand_total, " +
+            "invoices.incoming, " +
+            "invoices.outgoing, " +
+            "partners.name AS partner_name, " +
+            "categories.name AS category_name " +
+            "FROM invoices " +
+            "JOIN partners " +
+            "ON invoices.partners_id = partners.id " +
+            "JOIN categories " +
+            "ON invoices.categories_id = categories.id ";
 
     public List<Invoice> getAllInvoices() {
 
         List<Invoice> invoices = new ArrayList<>();
-//        String sql = "SELECT * FROM invoices";
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id;";
+        String sql = this.baseSql + ";";
         Invoice invoice;
 
         try {
@@ -56,22 +55,7 @@ public class InvoiceDB {
 
     public Invoice getInvoiceById(String id) {
 
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE invoices.id = ?";
+        String sql = this.baseSql + "WHERE invoices.id = ?";
         Invoice invoice = null;
 
         try {
@@ -98,22 +82,7 @@ public class InvoiceDB {
     }
 
     public List<Invoice> getInvoiceByIdLike(String id) {
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE invoices.id LIKE ?";
+        String sql = this.baseSql + "WHERE invoices.id LIKE ?";
         Invoice invoice;
         List<Invoice> invoices = new ArrayList<>();
 
@@ -141,538 +110,44 @@ public class InvoiceDB {
         return invoices;
     }
 
-    public List<Invoice> getInvoicesBetweenDatesByCompletionDate(Date startCompDate, Date endCompDate) {
-
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE invoices.completion_date " +
-                "BETWEEN ? AND ?;";
+    public List<Invoice> getInvoicesByAll(String id, Date startCreationDate, Date endCreationDate, Date startCompDate,
+                                          Date endCompDate, Date startDeadlineDate, Date endDeadlineDate, int minLimit,
+                                          int maxLimit, boolean isIncoming, boolean isOutgoing, String partnerName,
+                                          String categoryName) {
+        String sql = this.baseSql +
+                "WHERE invoices.id LIKE ? " +
+                "AND invoices.creation_date BETWEEN ? AND ? " +
+                "AND invoices.completion_date BETWEEN ? AND ? " +
+                "AND invoices.payment_deadline BETWEEN ? AND ? " +
+                "AND invoices.grand_total BETWEEN ? AND ? " +
+                "AND invoices.incoming = ? " +
+                "AND invoices.outgoing = ? " +
+                "AND partners.name LIKE ? " +
+                "AND categories.name LIKE ?";
         Invoice invoice;
+        List<Invoice> invoices = new ArrayList<>();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setDate(1, startCompDate);
-            preparedStatement.setDate(2, endCompDate);
+            preparedStatement.setString(1, "%" + id + "%");
+            preparedStatement.setDate(2, startCreationDate);
+            preparedStatement.setDate(3, endCreationDate);
+            preparedStatement.setDate(4, startCompDate);
+            preparedStatement.setDate(5, endCompDate);
+            preparedStatement.setDate(6, startDeadlineDate);
+            preparedStatement.setDate(7, endDeadlineDate);
+            preparedStatement.setInt(8, minLimit);
+            preparedStatement.setInt(9, maxLimit);
+            preparedStatement.setBoolean(10, isIncoming);
+            preparedStatement.setBoolean(11, isOutgoing);
+            preparedStatement.setString(12, "%" + partnerName + "%");
+            preparedStatement.setString(13, "%" + categoryName + "%");
             ResultSet result = preparedStatement.executeQuery();
             while (result.next()) {
                 invoice = new Invoice(
                         result.getString("id"),
-                        result.getDate("creation_date"),
                         result.getDate("completion_date"),
-                        result.getDate("payment_deadline"),
-                        result.getLong("grand_total"),
-                        result.getBoolean("incoming"),
-                        result.getBoolean("outgoing"),
-                        result.getString("partner_name"),
-                        result.getString("category_name")
-                );
-                invoices.add(invoice);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return invoices;
-    }
-
-    public List<Invoice> getInvoicesBetweenDatesByCreationDate(Date startCreationDate, Date endCreationDate) {
-
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE invoices.creation_date " +
-                "BETWEEN ? AND ?;";
-        Invoice invoice;
-
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setDate(1, startCreationDate);
-            preparedStatement.setDate(2, endCreationDate);
-            ResultSet result = preparedStatement.executeQuery();
-            while (result.next()) {
-                invoice = new Invoice(
-                        result.getString("id"),
                         result.getDate("creation_date"),
-                        result.getDate("completion_date"),
-                        result.getDate("payment_deadline"),
-                        result.getLong("grand_total"),
-                        result.getBoolean("incoming"),
-                        result.getBoolean("outgoing"),
-                        result.getString("partner_name"),
-                        result.getString("category_name")
-                );
-                invoices.add(invoice);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return invoices;
-    }
-
-    public List<Invoice> getInvoicesBetweenDatesByDeadlineDate(Date startDeadlineDate, Date endDeadlineDate) {
-
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE invoices.payment_deadline " +
-                "BETWEEN ? AND ?;";
-        Invoice invoice;
-
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setDate(1, startDeadlineDate);
-            preparedStatement.setDate(2, endDeadlineDate);
-            ResultSet result = preparedStatement.executeQuery();
-            while (result.next()) {
-                invoice = new Invoice(
-                        result.getString("id"),
-                        result.getDate("creation_date"),
-                        result.getDate("completion_date"),
-                        result.getDate("payment_deadline"),
-                        result.getLong("grand_total"),
-                        result.getBoolean("incoming"),
-                        result.getBoolean("outgoing"),
-                        result.getString("partner_name"),
-                        result.getString("category_name")
-                );
-                invoices.add(invoice);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return invoices;
-    }
-
-    public List<Invoice> getOverdueInvoices() {
-
-        Date now = Date.valueOf(LocalDate.now());
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE invoices.payment_deadline <= ?;";
-        Invoice invoice;
-
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setDate(1, now);
-            ResultSet result = preparedStatement.executeQuery();
-            while (result.next()) {
-                invoice = new Invoice(
-                        result.getString("id"),
-                        result.getDate("creation_date"),
-                        result.getDate("completion_date"),
-                        result.getDate("payment_deadline"),
-                        result.getLong("grand_total"),
-                        result.getBoolean("incoming"),
-                        result.getBoolean("outgoing"),
-                        result.getString("partner_name"),
-                        result.getString("category_name")
-                );
-                invoices.add(invoice);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return invoices;
-    }
-
-    public List<Invoice> getUnpaidInvoices() {
-
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE invoices.completion_date IS NULL;";
-        Invoice invoice;
-
-        try {
-            Statement statement = connection.prepareStatement(sql);
-
-            ResultSet result = statement.executeQuery(sql);
-            while (result.next()) {
-                invoice = new Invoice(
-                        result.getString("id"),
-                        result.getDate("creation_date"),
-//                        result.getDate("completion_date"),
-                        result.getDate("payment_deadline"),
-                        result.getLong("grand_total"),
-                        result.getBoolean("incoming"),
-                        result.getBoolean("outgoing"),
-                        result.getString("partner_name"),
-                        result.getString("category_name")
-                );
-                invoices.add(invoice);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return invoices;
-    }
-
-    public List<Invoice> getInvoicesByGrandTotalUnder(long limit) {
-
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE invoices.grand_total <= ?;";
-        Invoice invoice;
-
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setLong(1, limit);
-            ResultSet result = preparedStatement.executeQuery();
-            while (result.next()) {
-                invoice = new Invoice(
-                        result.getString("id"),
-                        result.getDate("creation_date"),
-                        result.getDate("completion_date"),
-                        result.getDate("payment_deadline"),
-                        result.getLong("grand_total"),
-                        result.getBoolean("incoming"),
-                        result.getBoolean("outgoing"),
-                        result.getString("partner_name"),
-                        result.getString("category_name")
-                );
-                invoices.add(invoice);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return invoices;
-    }
-
-    public List<Invoice> getInvoicesByGrandTotalOver(long limit) {
-
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE invoices.grand_total >= ?;";
-        Invoice invoice;
-
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setLong(1, limit);
-            ResultSet result = preparedStatement.executeQuery();
-            while (result.next()) {
-                invoice = new Invoice(
-                        result.getString("id"),
-                        result.getDate("creation_date"),
-                        result.getDate("completion_date"),
-                        result.getDate("payment_deadline"),
-                        result.getLong("grand_total"),
-                        result.getBoolean("incoming"),
-                        result.getBoolean("outgoing"),
-                        result.getString("partner_name"),
-                        result.getString("category_name")
-                );
-                invoices.add(invoice);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return invoices;
-    }
-
-    public List<Invoice> getInvoicesByGrandTotalBetween(long minLimit, long maxLimit) {
-
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE invoices.grand_total " +
-                "BETWEEN ? AND ?;";
-        Invoice invoice;
-
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setLong(1, minLimit);
-            preparedStatement.setLong(2, maxLimit);
-            ResultSet result = preparedStatement.executeQuery();
-            while (result.next()) {
-                invoice = new Invoice(
-                        result.getString("id"),
-                        result.getDate("creation_date"),
-                        result.getDate("completion_date"),
-                        result.getDate("payment_deadline"),
-                        result.getLong("grand_total"),
-                        result.getBoolean("incoming"),
-                        result.getBoolean("outgoing"),
-                        result.getString("partner_name"),
-                        result.getString("category_name")
-                );
-                invoices.add(invoice);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return invoices;
-    }
-
-    public List<Invoice> getIncomingInvoices() {
-
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE invoices.incoming = true;";
-        Invoice invoice;
-
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            ResultSet result = preparedStatement.executeQuery();
-            while (result.next()) {
-                invoice = new Invoice(
-                        result.getString("id"),
-                        result.getDate("creation_date"),
-                        result.getDate("completion_date"),
-                        result.getDate("payment_deadline"),
-                        result.getLong("grand_total"),
-                        result.getBoolean("incoming"),
-                        result.getBoolean("outgoing"),
-                        result.getString("partner_name"),
-                        result.getString("category_name")
-                );
-                invoices.add(invoice);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return invoices;
-    }
-
-    public List<Invoice> getOutgoingInvoices() {
-
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE invoices.outgoing = true;";
-        Invoice invoice;
-
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            ResultSet result = preparedStatement.executeQuery();
-            while (result.next()) {
-                invoice = new Invoice(
-                        result.getString("id"),
-                        result.getDate("creation_date"),
-                        result.getDate("completion_date"),
-                        result.getDate("payment_deadline"),
-                        result.getLong("grand_total"),
-                        result.getBoolean("incoming"),
-                        result.getBoolean("outgoing"),
-                        result.getString("partner_name"),
-                        result.getString("category_name")
-                );
-                invoices.add(invoice);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return invoices;
-    }
-
-    public List<Invoice> getInvoicesByPartnerName(String partnerName) {
-
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE partner_name LIKE ?;";
-        Invoice invoice;
-
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, "%" + partnerName + "%");
-            ResultSet result = preparedStatement.executeQuery();
-            while (result.next()) {
-                invoice = new Invoice(
-                        result.getString("id"),
-                        result.getDate("creation_date"),
-                        result.getDate("completion_date"),
-                        result.getDate("payment_deadline"),
-                        result.getLong("grand_total"),
-                        result.getBoolean("incoming"),
-                        result.getBoolean("outgoing"),
-                        result.getString("partner_name"),
-                        result.getString("category_name")
-                );
-                invoices.add(invoice);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return invoices;
-    }
-
-    public List<Invoice> getInvoicesByCategory(String category) {
-
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT " +
-                "invoices.id, " +
-                "invoices.creation_date, " +
-                "invoices.completion_date, " +
-                "invoices.payment_deadline, " +
-                "invoices.grand_total, " +
-                "invoices.incoming, " +
-                "invoices.outgoing, " +
-                "partners.name AS partner_name, " +
-                "categories.name AS category_name " +
-                "FROM invoices " +
-                "JOIN partners " +
-                "ON invoices.partners_id = partners.id " +
-                "JOIN categories " +
-                "ON invoices.categories_id = categories.id " +
-                "WHERE category_name LIKE ?;";
-        Invoice invoice;
-
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, "%" + category + "%");
-            ResultSet result = preparedStatement.executeQuery();
-            while (result.next()) {
-                invoice = new Invoice(
-                        result.getString("id"),
-                        result.getDate("creation_date"),
-                        result.getDate("completion_date"),
                         result.getDate("payment_deadline"),
                         result.getLong("grand_total"),
                         result.getBoolean("incoming"),
@@ -692,7 +167,7 @@ public class InvoiceDB {
         String sql = "INSERT INTO invoices VALUES " +
                 "(?, ?, ?, ?, ?, ?, ?, " +
                 "(SELECT partners.id FROM invoicecollector.partners " +
-                "WHERE partners.name = ?)," +
+                "WHERE partners.name = ?), " +
                 "(SELECT categories.id FROM invoicecollector.categories " +
                 "WHERE categories.name = ?));";
 
@@ -706,7 +181,7 @@ public class InvoiceDB {
             preparedStatement.setBoolean(6, invoice.isIncoming());
             preparedStatement.setBoolean(7, invoice.isOutgoing());
             preparedStatement.setString(8, invoice.getPartnerName());
-            preparedStatement.setString(9, invoice.getPartnerName());
+            preparedStatement.setString(9, invoice.getCategory());
             preparedStatement.executeUpdate();
 
         } catch (Exception exception) {
