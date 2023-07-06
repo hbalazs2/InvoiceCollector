@@ -163,6 +163,36 @@ public class InvoiceDB {
         return invoices;
     }
 
+    public List<Invoice> getInvoicesByPartnerId(String id) {
+
+        List<Invoice> invoices = new ArrayList<>();
+        String sql = this.baseSql + "WHERE invoices.partners_id = ?;";
+        Invoice invoice;
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, id);
+            ResultSet result = preparedStatement.executeQuery();
+            while (result.next()) {
+                invoice = new Invoice(
+                        result.getString("id"),
+                        result.getDate("creation_date"),
+                        result.getDate("completion_date"),
+                        result.getDate("payment_deadline"),
+                        result.getLong("grand_total"),
+                        result.getBoolean("incoming"),
+                        result.getBoolean("outgoing"),
+                        result.getString("partner_name"),
+                        result.getString("category_name")
+                );
+                invoices.add(invoice);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return invoices;
+    }
+
     public Invoice insertInvoice(Invoice invoice) {
         String sql = "INSERT INTO invoices VALUES " +
                 "(?, ?, ?, ?, ?, ?, ?, " +

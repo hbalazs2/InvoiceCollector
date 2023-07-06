@@ -1,0 +1,3 @@
+[{"id":1, "name":"Big Company", "country_code":"HU", "postal_code":"1165", "city":"Budapest", "address":"Sajtos utca 97", "connection_date":"2021-10-15"},
+ {"id":2, "name":"Smol Company", "country_code":"HU", "postal_code":"7632", "city":"P\u00e9cs", "address":"Kapa utca 97", "connection_date":"2022-01-15"},
+ {"id":3, "name":"Med Company", "country_code":"HU", "postal_code":"7100", "city":"Szeksz\u00e1rd", "address":"Kacsa utca 8", "connection_date":"2020-01-01"}]

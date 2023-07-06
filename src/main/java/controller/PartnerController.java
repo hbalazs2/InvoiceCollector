@@ -56,6 +56,7 @@ public class PartnerController {
         }
         return result;
     }
+
     @GetMapping("/partners/searchByCountryCode")
     public Map<String, Object> getPartnersByCountryCode(@RequestParam String countryCode) {
         PartnerDB partnerDB = new PartnerDB();

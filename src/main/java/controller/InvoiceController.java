@@ -29,7 +29,7 @@ public class InvoiceController {
     @GetMapping("/invoice")
     public Object getInvoiceById(@RequestParam(defaultValue = "") String id) {
         InvoiceDB invoiceDB = new InvoiceDB();
-        System.out.println("ID: "+id);
+        System.out.println("ID class: " + id.getClass());
         List<Invoice> invoices = new ArrayList<>();
         Invoice invoice = invoiceDB.getInvoiceById(id);
         if (invoice == null) {
@@ -60,6 +60,19 @@ public class InvoiceController {
         }
         System.out.println(result);
         return result;
+    }
+
+    @GetMapping("/invoiceByPartnerId")
+    public Object getInvoicesByPartnerId(@RequestParam(defaultValue = "") String id) {
+        InvoiceDB invoiceDB = new InvoiceDB();
+
+        List<Invoice> invoices = invoiceDB.getInvoicesByPartnerId(id);
+
+        if (invoices == null) {
+            invoices = invoiceDB.getInvoiceByIdLike(id);
+        }
+
+        return invoices;
     }
 
     @PostMapping("/invoices/insert")

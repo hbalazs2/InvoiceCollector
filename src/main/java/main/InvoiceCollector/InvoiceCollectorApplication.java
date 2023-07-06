@@ -1,4 +1,4 @@
-package com.example.InvoiceCollector;
+package main.InvoiceCollector;
 
 import db.CategoryDB;
 import db.InvoiceDB;
@@ -10,10 +10,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootApplication(scanBasePackages = {"controller"})
